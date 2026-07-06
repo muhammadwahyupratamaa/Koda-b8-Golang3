@@ -1,28 +1,44 @@
-package main
+	package main
 
-import "fmt"
+	import (
+		"fmt"
+		"math/rand"
+		"slices"
+	)
 
-func main() {
-	 scores := []int{50, 75, 66, 20, 32, 90}
-	 
-	 targetIdx := -1
+	func main() {
+		scores := []int{50, 75, 66, 20, 32, 90}
+		
+		targetIdx := -1
 
-	 for i, v := range scores {
-		if v == 66 {
-			targetIdx = i
-			break
+		for i, v := range scores {
+			if v == 66 {
+				targetIdx = i
+				break
+			}
 		}
-	 }
 
-	 if targetIdx != -1 {
-	leftPart := append([]int{}, scores[:targetIdx+1]...)
-	leftPart = append(leftPart, 88)
+		if targetIdx != -1 {
+		leftPart := append([]int{}, scores[:targetIdx+1]...)
+		leftPart = append(leftPart, 88)
 
-	scores = append(leftPart,scores[targetIdx+1:]... )
-	 }
+		scores = append(leftPart,scores[targetIdx+1:]... )
+		}
 
-	 fmt.Println("Score setelah di sisipkan 88")
-	 for _, score := range scores {
-		fmt.Println(score)
-	 }
-}
+		fmt.Println("Score setelah di sisipkan 88")
+		for _, score := range scores {
+			fmt.Println(score)
+		}
+
+		rand.Shuffle(len(scores), func (i,j int){
+			scores[i], scores[j] = scores[j],scores[i]
+		}) 
+
+		idx88 := slices.Index(scores, 88)
+		scores = slices.Delete(scores, idx88 , idx88+1)
+		idx66 := slices.Index(scores,66)
+		scores = slices.Insert(scores, idx66 ,88)
+		
+		fmt.Print("angka yang sudah di shuffle = ")
+		fmt.Println(scores)
+	}
