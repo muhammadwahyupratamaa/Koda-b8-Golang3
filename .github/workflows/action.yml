@@ -1,0 +1,46 @@
+name: Build Docker Image
+run-name: Running build image
+
+on:
+  push:
+    tags:
+      - "v1.*"
+
+jobs:
+  build-app:
+    name: Build Go App
+    runs-on: ubuntu-latest
+
+    outputs:
+      output1: ${{ steps.upload-bin.outputs.artifact-id }}
+
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.4"
+
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Download dependencies
+        run: go mod tidy
+
+      - name: Build Linux
+        run: go build -o app-linux main.go
+
+      - name: Build Windows
+        run: GOOS=windows GOARCH=amd64 go build -o app-windows.exe main.go
+
+      - name: Build macOS
+        run: GOOS=darwin GOARCH=arm64 go build -o app-darwin main.go
+
+      - name: Build Release
+        run: go build -o app main.go
+
+      - name: Upload Artifact
+        id: upload-bin
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-result
+          path: app
